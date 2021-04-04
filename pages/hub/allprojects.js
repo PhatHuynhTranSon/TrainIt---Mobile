@@ -27,25 +27,27 @@ const AllProjects = ({ navigation }) => {
     const isFocused = useIsFocused();
 
     //On loaded -> Get all projects
-    React.useState(() => {
-        getAllProjects()
-            .then(allProjects => {
-                setProjects(allProjects);
-            })
-            .catch(error => {
-                if (error.response) {
-                    const message = error.response.data.message;
-                    setErrorMessage(message);
+    React.useEffect(() => {
+        if (isFocused) {
+            getAllProjects()
+                .then(allProjects => {
+                    setProjects(allProjects);
+                })
+                .catch(error => {
+                    if (error.response) {
+                        const message = error.response.data.message;
+                        setErrorMessage(message);
 
-                    //Unauthorized
-                    if (error.response.status === 401 || error.response.status === 422) {
-                        setToken("")
-                            .then(() => navigation.navigate("Login"));
+                        //Unauthorized
+                        if (error.response.status === 401 || error.response.status === 422) {
+                            setToken("")
+                                .then(() => navigation.navigate("Login"));
+                        }
+                    } else {
+                        setErrorMessage("An unknown error occured");
                     }
-                } else {
-                    setErrorMessage("An unknown error occured");
-                }
-            });
+                });
+        }
     }, [isFocused]);
 
     //Render
